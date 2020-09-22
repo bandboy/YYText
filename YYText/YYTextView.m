@@ -1267,7 +1267,8 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
 
 /// Returns whether the text view can paste data from pastboard.
 - (BOOL)_isPasteboardContainsValidValue {
-    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    NSString * strBuildID = [[[NSBundle mainBundle]infoDictionary]objectForKey:@"CFBundleIdentifier"];
+    UIPasteboard * pasteboard = [UIPasteboard pasteboardWithName:strBuildID create:YES];
     if (pasteboard.string.length > 0) {
         return YES;
     }
@@ -1286,15 +1287,17 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
 
 /// Save current selected attributed text to pasteboard.
 - (void)_copySelectedTextToPasteboard {
+    NSString * strBuildID = [[[NSBundle mainBundle]infoDictionary]objectForKey:@"CFBundleIdentifier"];
+    UIPasteboard * pasteboard = [UIPasteboard pasteboardWithName:strBuildID create:YES];
     if (_allowsCopyAttributedString) {
         NSAttributedString *text = [_innerText attributedSubstringFromRange:_selectedTextRange.asRange];
         if (text.length) {
-            [UIPasteboard generalPasteboard].yy_AttributedString = text;
+            pasteboard.yy_AttributedString = text;
         }
     } else {
         NSString *string = [_innerText yy_plainTextForRange:_selectedTextRange.asRange];
         if (string.length) {
-            [UIPasteboard generalPasteboard].string = string;
+            pasteboard.string = string;
         }
     }
 }
@@ -2912,7 +2915,8 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
 
 - (void)paste:(id)sender {
     [self _endTouchTracking];
-    UIPasteboard *p = [UIPasteboard generalPasteboard];
+    NSString * strBuildID = [[[NSBundle mainBundle]infoDictionary]objectForKey:@"CFBundleIdentifier"];
+    UIPasteboard * p = [UIPasteboard pasteboardWithName:strBuildID create:YES];
     NSAttributedString *atr = nil;
     
     if (_allowsPasteAttributedString) {
